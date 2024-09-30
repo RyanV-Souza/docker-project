@@ -1,22 +1,24 @@
-FROM node:lts-alpine3.19 AS build
+FROM node:20-alpine3.19 AS build
 
-WORKDIR /src/app
+WORKDIR /app
 
 COPY package*.json ./
+
 RUN npm install
 
 COPY . .
 
 RUN npm run build
+RUN npm prune --omit=dev
 
- 
-FROM node:lts-alpine3.19 AS runtime
+FROM node:20-alpine3.19 AS runtime
 
-WORKDIR /src/app
+WORKDIR /app
 
-COPY --from=build /src/app/dist ./dist
-COPY --from=build /src/app/node_modules ./node_modules
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
 
 EXPOSE 3000
 
-CMD [ "npm", "run", "start" ]
+CMD ["npm", "run", "start:prod"]
