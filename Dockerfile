@@ -1,6 +1,6 @@
-FROM node:lts-slim
+FROM node:lts-alpine3.19
 
-WORKDIR /usr/src/app
+WORKDIR /src/app
 
 COPY package*.json ./
 RUN npm install
